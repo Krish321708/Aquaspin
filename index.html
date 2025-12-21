@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>AquaSpin | Kinetic Morphing & Engineering</title>
+    <meta name="description" content="AquaSpin: Harvesting kinetic energy from greywater to power UVC-LED purification with zero external electricity.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --panel: #0c0c0d;
+            --border: #1e1e1f;
+            --white: #f5f5f7;
+            --gray: #86868b;
+            --accent: #3ab3ff;
+            --accent-glow: rgba(58, 179, 255, 0.4);
+            --accent-gradient: linear-gradient(135deg, #3ab3ff, #6ee1ff);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Manrope', sans-serif; scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--white); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* --- THE FAIL-SAFE LOADER --- */
+        #loader {
+            position: fixed; inset: 0; background: #000; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .loader-bar { width: 150px; height: 2px; background: rgba(58, 179, 255, 0.2); position: relative; overflow: hidden; }
+        .loader-bar::after { content: ''; position: absolute; width: 40%; height: 100%; background: var(--accent); animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { left: -40%; } 100% { left: 100%; } }
+
+        /* --- DYNAMIC NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 8%; z-index: 9999;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: 0.4s;
+        }
+        .logo { font-weight: 800; font-size: 1.3rem; letter-spacing: -1px; cursor: pointer; color: var(--white); }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { text-decoration: none; color: var(--white); opacity: 0.7; transition: 0.3s; font-size: 0.85rem; font-weight: 600; }
+        .nav-links a:hover { opacity: 1; color: var(--accent); }
+        .cta-nav { background: var(--accent); padding: 8px 20px; border-radius: 30px; color: #000 !important; font-weight: 700; opacity: 1 !important; }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: var(--white); }
+
+        /* --- MORPHING HERO --- */
+        .scroll-container { height: 350vh; position: relative; background: radial-gradient(circle at center, #0a111a 0%, #050505 100%); }
+        .sticky-frame {
+            position: sticky; top: 0; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+        .hero-text {
+            position: absolute; font-size: clamp(3.5rem, 12vw, 9rem); font-weight: 800;
+            letter-spacing: -5px; line-height: 0.8; text-align: center;
+            transition: transform 0.1s linear, opacity 0.1s linear;
+        }
+        .morph-core {
+            width: 180px; height: 180px; border: 2px solid var(--accent);
+            position: relative; display: flex; justify-content: center; align-items: center;
+            transition: all 0.1s linear; box-shadow: 0 0 50px rgba(58, 179, 255, 0.1);
+        }
+        .core-inner { width: 60%; height: 60%; border: 1px solid var(--accent); animation: spin 10s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #status { position: absolute; font-family: 'JetBrains Mono'; font-size: 9px; bottom: -40px; white-space: nowrap; letter-spacing: 1px; color: var(--accent); }
+
+        /* --- CONTENT SECTIONS --- */
+        section { padding: 100px 10%; position: relative; }
+        .info-panel {
+            max-width: 550px; padding: 50px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); backdrop-filter: blur(15px);
+            border-radius: 32px; opacity: 0; transform: translateY(40px);
+            transition: all 0.8s ease; margin-bottom: 150px;
+        }
+        .info-panel.active { opacity: 1; transform: translateY(0); }
+        .tag { font-family: 'JetBrains Mono'; color: var(--accent); font-size: 0.7rem; letter-spacing: 3px; font-weight: 800; text-transform: uppercase; margin-bottom: 15px; display: block; }
+
+        /* --- BLUEPRINT SECTION --- */
+        .tech-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+        .blueprint-container {
+            background: #080808; border: 1px solid var(--border); padding: 40px; border-radius: 28px;
+            background-image: linear-gradient(rgba(58, 179, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(58, 179, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .blueprint-svg { width: 100%; max-width: 250px; display: block; margin: 0 auto; }
+        .wireframe { fill: none; stroke: #333; stroke-width: 1.5; }
+        .wireframe-accent { fill: none; stroke: var(--accent); stroke-width: 2; }
+
+        /* --- BENTO GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 32px; padding: 40px; transition: 0.4s; }
+        .card:hover { border-color: #444; }
+        .wide { grid-column: span 2; }
+        .stat { font-size: 4rem; font-weight: 800; color: var(--white); }
+
+        /* --- SPECS TABLE --- */
+        .specs-container { background: var(--panel); border-radius: 32px; border: 1px solid var(--border); overflow: hidden; margin-top: 40px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 25px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--gray); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; background: rgba(255,255,255,0.01); }
+        .highlight-row { color: var(--accent); font-weight: 700; }
+
+        /* --- CONTACT FORM --- */
+        .contact-form { max-width: 600px; margin: 40px auto; display: grid; gap: 15px; }
+        input, textarea { width: 100%; padding: 20px; background: #0a0a0a; border: 1px solid var(--border); border-radius: 15px; color: white; outline: none; }
+        .submit-btn { background: var(--accent); color: #000; border: none; padding: 20px; border-radius: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px var(--accent-glow); }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #000; flex-direction: column; padding: 40px; border-bottom: 1px solid var(--border); }
+            .nav-links.active { display: flex; }
+            .menu-toggle { display: block; }
+            .grid, .tech-grid { grid-template-columns: 1fr; }
+            .wide { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-bar"></div>
+        <p style="margin-top:20px; font-family:'JetBrains Mono'; color:var(--accent); font-size:10px;">AQUASPIN_CORE_INIT</p>
+    </div>
+
+    <nav>
+        <div class="logo" onclick="window.scrollTo(0,0)">AQUASPIN</div>
+        <div class="menu-toggle" id="menu-btn">☰</div>
+        <div class="nav-links" id="nav-menu">
+            <a href="#overview">Vision</a>
+            <a href="#tech">Mechanism</a>
+            <a href="#usage">Usage</a>
+            <a href="#specs">Specs</a>
+            <a href="#contact" class="cta-nav">Get Involved</a>
+        </div>
+    </nav>
+
+    <div class="scroll-container" id="overview">
+        <div class="sticky-frame">
+            <h1 class="hero-text" id="titleA">KINETIC</h1>
+            <h1 class="hero-text" id="titleB" style="margin-top: 150px; opacity: 0;">POWER</h1>
+
+            <div class="morph-core" id="core">
+                <div class="core-inner"></div>
+                <div id="status">STATUS: STANDBY</div>
+            </div>
+        </div>
+    </div>
+
+    <section id="tech">
+        <div class="tech-grid">
+            <div class="blueprint-container">
+                <div style="font-family:monospace; color:var(--accent); font-size:0.6rem; margin-bottom:20px; text-transform:uppercase;">Schematic v1.02</div>
+                <svg viewBox="0 0 200 400" class="blueprint-svg">
+                    <rect x="50" y="40" width="100" height="320" rx="30" class="wireframe" />
+                    <circle cx="100" cy="120" r="35" class="wireframe" style="stroke-dasharray: 4;" />
+                    <path d="M100 85 L100 155 M65 120 L135 120" class="wireframe-accent" />
+                    <rect x="70" y="180" width="60" height="80" rx="10" class="wireframe-accent" style="opacity:0.3" />
+                </svg>
+            </div>
+            <div>
+                <div class="info-panel active" style="opacity:1; transform:none; max-width:100%; margin-bottom:40px;">
+                    <span class="tag">01 // Induction</span>
+                    <h2>Mechanical Harvesting.</h2>
+                    <p style="color:var(--gray); margin-top:15px;">AquaSpin converts fluid velocity into rotational energy. As water spins the impeller at up to 2600 RPM, the system generates up to 4.5W of DC power—completely grid-independent.</p>
+                </div>
+                <div class="info-panel active" style="opacity:1; transform:none; max-width:100%;">
+                    <span class="tag">02 // Purification</span>
+                    <h2>UVC DNA Disruption.</h2>
+                    <p style="color:var(--gray); margin-top:15px;">The harvested power energizes medical-grade UVC-LEDs. At 265nm, the light shatters microbial DNA, neutralizing 99.9% of pathogens in real-time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <section id="usage">
+        <span class="tag">Applications</span>
+        <h2 style="font-size:3rem; margin-bottom:50px;">Built for impact.</h2>
+        <div class="grid">
+            <div class="card wide">
+                <h3>Urban Resilience</h3>
+                <p style="color:var(--gray); margin-top:10px;">Perfect for high-density apartments. Retrofit plumbing to recycle greywater for toilet flushing and cooling systems.</p>
+            </div>
+            <div class="card">
+                <h3>Off-Grid Health</h3>
+                <p style="color:var(--gray); margin-top:10px;">Ensuring sterile water standards in rural clinics where electricity is unreliable.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="specs">
+        <span class="tag">Performance Data</span>
+        <div class="specs-container">
+            <table>
+                <thead><tr><th>Parameter</th><th>Specification</th></tr></thead>
+                <tbody>
+                    <tr><td>Operating Flow</td><td class="highlight-row">1.5 – 8.0 L/Min</td></tr>
+                    <tr><td>Energy Consumption</td><td class="highlight-row">0.0W (Self-Powered)</td></tr>
+                    <tr><td>Purification Rate</td><td class="highlight-row">99.9% Microbial reduction</td></tr>
+                    <tr><td>Core Lifespan</td><td class="highlight-row">~15,000 Hours (LED)</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="founder">
+        <div class="card" style="display:flex; gap:50px; flex-wrap:wrap; align-items:center;">
+            <div style="flex:1; min-width:300px;">
+                <span class="tag">The Founder</span>
+                <h2 style="font-size:3rem;">Krish.</h2>
+                <p style="color:var(--gray); font-size:1.1rem; line-height:1.8; margin-top:20px;">A Grade 10 innovator focused on engineering autonomy. Krish designed AquaSpin to bridge the gap between resource waste and sustainable technology, focusing on buildable, high-impact hardware.</p>
+            </div>
+            <div style="width:200px; height:200px; background:#111; border:1px dashed #333; border-radius:50%; display:flex; align-items:center; text-align:center; font-size:0.6rem; color:var(--gray); padding:20px;">
+                REPRESENTATION OF R&D PROTOTYPE
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" style="text-align:center;">
+        <h2 style="font-size:3rem; letter-spacing:-2px;">Join the Movement.</h2>
+        <form class="contact-form" action="https://formspree.io/f/mnqeogov" method="POST">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <textarea name="message" rows="4" placeholder="How can we collaborate?" required></textarea>
+            <button type="submit" class="submit-btn">Initialize Connection</button>
+        </form>
+    </section>
+
+    <footer style="padding:50px 10%; border-top:1px solid var(--border); text-align:center; color:var(--gray); font-size:0.8rem;">
+        © 2025 AQUASPIN PROJECT // DESIGNED FOR RESILIENCE
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        const core = document.getElementById('core');
+        const titleA = document.getElementById('titleA');
+        const titleB = document.getElementById('titleB');
+        const status = document.getElementById('status');
+
+        // Mobile Menu Logic
+        menuBtn.onclick = () => {
+            navMenu.classList.toggle('active');
+            menuBtn.innerHTML = navMenu.classList.contains('active') ? '✕' : '☰';
+        };
+
+        // Scroll Morph Logic
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const threshold = 1000;
+            const rate = Math.min(scrolled / threshold, 1);
+
+            // Morph Hero Elements
+            core.style.borderRadius = `${rate * 50}%`;
+            core.style.transform = `scale(${1 + (rate * 1.5)}) rotate(${scrolled / 3}deg)`;
+            
+            titleA.style.transform = `translateY(${rate * -150}px) scale(${1 - rate})`;
+            titleA.style.opacity = 1 - (rate * 2);
+            
+            titleB.style.opacity = rate > 0.5 ? (rate - 0.5) * 2 : 0;
+            titleB.style.transform = `translateY(${(1 - rate) * 80}px)`;
+
+            if(rate > 0.9) status.innerText = "STATUS: MAXIMUM_OUTPUT";
+            else if (rate > 0.1) status.innerText = "STATUS: HARVESTING_FLOW";
+            else status.innerText = "STATUS: STANDBY";
+
+            // Reveal Info Panels
+            document.querySelectorAll('.info-panel').forEach(panel => {
+                const rect = panel.getBoundingClientRect();
+                if(rect.top < window.innerHeight * 0.85) panel.classList.add('active');
+            });
+        });
+
+        // Loader Fail-Safe
+        function start() {
+            const loader = document.getElementById('loader');
+            if(loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 600);
+            }
+        }
+        window.addEventListener('load', start);
+        window.addEventListener('scroll', start, {once: true});
+        setTimeout(start, 2000);
+    </script>
+</body>
+</html>
