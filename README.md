@@ -1,2 +1,5 @@
-# Aquaspin\n\n> A student engineering project exploring self-powered greywater reuse through micro-turbine energy recovery, filtration, and UV treatment for non-potable applications.\n# Aquaspin
+# Aquaspin
+
+> A student engineering project exploring self-powered greywater reuse through micro-turbine energy recovery, filtration, and UV treatment for non-potable applications.
+# Aquaspin
 AquaSpin is a self-powered greywater recycling system that uses micro-turbines and UV filtration to convert bathroom and sink wastewater into reusable water for toilets, cleaning, and gardening—without needing electricity.
